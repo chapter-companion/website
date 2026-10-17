@@ -2,12 +2,20 @@
 
 Buildless public landing page and native app-link handoff for `chaptercompanion.app`.
 
-## Cloudflare Pages
+## Production deployment
 
-- Connect this GitHub repository to a Cloudflare Pages project.
-- Production branch: `main`; build command: `npm run check:release`; output directory: `dist`.
-- Add `chaptercompanion.app` as a Pages custom domain. Let Pages create its apex DNS record; preserve mail, verification, and other unrelated DNS records.
-- `_redirects` serves `/121-planner/{token}` and `/invite/{id}` through the landing page. Association files remain direct JSON responses.
+The production host is the Cloudflare Pages **Direct Upload** project `chapter-companion` (`chapter-companion.pages.dev`), with custom domain `chaptercompanion.app`. This GitHub repository stores the source; GitHub commits do **not** deploy automatically. CI is not connected.
+
+1. Run `npm run check:release` and `npm test` locally.
+2. In the Cloudflare dashboard, open **Workers & Pages → chapter-companion → Create deployment**. Upload `dist/` or a ZIP containing the **contents** of `dist/` at its root, including `.well-known`, `_headers`, and `_redirects`. Do not wrap the assets in another `dist/` directory.
+3. Alternatively, with an authenticated Wrangler installation, run `npx wrangler pages deploy dist --project-name chapter-companion --branch main` from this repository.
+4. Verify `/121-planner/{32-character-token}`, `/invite/{id}`, and both `.well-known` JSON URLs on the production custom domain after deployment.
+
+The deployable output is `dist`; there is no framework build or dependency installation.
+
+- The Pages custom domain owns the apex DNS record. Preserve mail, verification, and other unrelated DNS records.
+- `_redirects` serves `/121-planner/{token}` and `/invite/{id}` through the landing page. No top-level `404.html` is shipped, so Cloudflare’s built-in single-page-app fallback also preserves deep links. Unknown routes render a friendly message in the client. Association files remain direct JSON responses.
+- Configure `www.chaptercompanion.app` → `https://chaptercompanion.app` with a Cloudflare Redirect Rule / Bulk Redirect, preserving the path suffix and query string. Domain-level rules are not supported in Pages `_redirects`.
 - `_headers` supplies the app-association MIME types and a restrictive content security policy.
 
 No runtime credentials or build dependencies are needed. The Supabase `sb_publishable_…` key in `dist/app.js` is the application's public, anonymous API key, used only for the public settings RPC. Never replace it with a service-role or secret key.
