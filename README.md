@@ -2,6 +2,13 @@
 
 Buildless public landing page and native app-link handoff for `chaptercompanion.app`.
 
+Production was verified on 17 October 2026: the apex, planner and invitation
+routes return HTTP 200 over HTTPS; both app-association files return JSON.
+Cloudflare DNS uses proxied CNAME records for `@` and `www` pointing to
+`chapter-companion.pages.dev`. The enabled redirect rule sends HTTPS `www`
+requests to the apex with their path and query string preserved. Registrar
+nameservers remain `grace.ns.cloudflare.com` and `kareem.ns.cloudflare.com`.
+
 ## Production deployment
 
 The production host is the Cloudflare Pages **Direct Upload** project `chapter-companion` (`chapter-companion.pages.dev`), with custom domain `chaptercompanion.app`. This GitHub repository stores the source; GitHub commits do **not** deploy automatically. CI is not connected.
