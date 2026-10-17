@@ -1,0 +1,10 @@
+{
+  "name": "chapter-companion-website",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build-associations.mjs",
+    "test": "node --test",
+    "check:release": "node scripts/build-associations.mjs --require-android"
+  }
+}

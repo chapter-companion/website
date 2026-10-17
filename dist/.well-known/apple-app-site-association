@@ -1,0 +1,14 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "NJKGDG3Y3G.com.soance.mybni.app",
+        "paths": [
+          "/121-planner/*",
+          "/invite/*"
+        ]
+      }
+    ]
+  }
+}
