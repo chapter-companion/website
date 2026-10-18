@@ -57,6 +57,18 @@ The backend migration and Edge Function must be deployed to the same Supabase
 project before publishing the viewer. Test incorrect/correct passcodes, rotation,
 revocation, cache headers and the legacy association URLs after deployment.
 
+Protected sharing was deployed on 18 October 2026 to Supabase project
+`rfmzmoeherrzbjglwcor` and Cloudflare Pages deployment
+`1c9163de.chapter-companion.pages.dev` (runtime source commit `ba2de69`). Live
+checks confirmed a correct passcode opens the document, an old passcode fails
+after rotation, and rotation/revocation clear an open viewer. The synthetic QA
+link was revoked and removed afterward. Seven-page and ten-page Flutter
+exports, including custom logos and continuation pages, were compared visually
+with their HTML counterparts. A 390px viewport fit without horizontal overflow.
+Website checks passed all 16 tests; the Edge Function passed 14 tests and the
+database authorization/concurrency checks passed. No physical-device or new
+mobile store build is claimed for this protected-sharing update.
+
 Production was verified on 17 October 2026: the apex, planner and invitation
 routes return HTTP 200 over HTTPS; both app-association files return JSON.
 Cloudflare DNS uses proxied CNAME records for `@` and `www` pointing to
@@ -69,9 +81,8 @@ nameservers remain `grace.ns.cloudflare.com` and `kareem.ns.cloudflare.com`.
 The production host is the Cloudflare Pages **Direct Upload** project `chapter-companion` (`chapter-companion.pages.dev`), with custom domain `chaptercompanion.app`. This GitHub repository stores the source; GitHub commits do **not** deploy automatically. CI is not connected.
 
 1. Run `npm run check:release` and `npm test` locally.
-2. In the Cloudflare dashboard, open **Workers & Pages → chapter-companion → Create deployment**. Upload `dist/` or a ZIP containing the **contents** of `dist/` at its root, including `.well-known`, `_headers`, and `_redirects`. Do not wrap the assets in another `dist/` directory.
-3. Alternatively, with an authenticated Wrangler installation, run `npx wrangler pages deploy dist --project-name chapter-companion --branch main` from this repository.
-4. Verify `/121-planner/{32-character-token}`, `/invite/{id}`, and both `.well-known` JSON URLs on the production custom domain after deployment.
+2. With an authenticated Wrangler installation, run `npx wrangler@4.151.1 pages deploy dist --project-name chapter-companion --branch main` from this repository. This deploys the protected-route Worker and all assets together.
+3. Verify `/connect/{32-character-token}`, `/121-planner/{32-character-token}`, `/invite/{id}`, and both `.well-known` JSON URLs on the production custom domain after deployment. Dashboard drag-and-drop alone is insufficient for the protected-route Worker.
 
 The deployable output is `dist`; there is no framework build or dependency installation.
 
