@@ -10,3 +10,7 @@
 /.well-known/assetlinks.json
   Content-Type: application/json
   Cache-Control: public, max-age=300
+/connect/*
+  Cache-Control: no-store, max-age=0
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
+  Cross-Origin-Resource-Policy: same-origin

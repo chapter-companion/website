@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+  <meta name="referrer" content="no-referrer">
+  <title>Shared 121 planner · Chapter Companion</title>
+  <link rel="icon" href="/app-icon.png" type="image/png">
+  <link rel="stylesheet" href="/planner-assets/connect.css">
+  <script type="module" src="/planner-assets/connect.js"></script>
+</head>
+<body>
+  <header class="brand-bar">
+    <a class="brand" href="/" aria-label="Chapter Companion home"><img src="/app-icon.png" width="40" height="40" alt=""><span>Chapter Companion</span></a>
+    <span class="private-label">Private planner</span>
+  </header>
+  <main>
+    <section class="unlock-card" id="gate" aria-labelledby="gate-title">
+      <div class="lock-mark" aria-hidden="true">⌑</div>
+      <p class="eyebrow">A CONVERSATION WORTH HAVING</p>
+      <h1 id="gate-title">Your shared<br>121 planner.</h1>
+      <p id="gate-description">Enter the passcode the sender shared with you to open their planner.</p>
+      <form id="unlock-form" autocomplete="off">
+        <label for="passcode">Planner passcode</label>
+        <div class="passcode-row"><input id="passcode" name="passcode" type="password" required minlength="8" maxlength="64" pattern="[A-Za-z0-9]{8,64}" autocapitalize="none" spellcheck="false" autocomplete="off" aria-describedby="status"><button id="reveal" type="button" aria-label="Show passcode" aria-pressed="false">Show</button></div>
+        <button class="primary" id="unlock" type="submit">Open planner <span aria-hidden="true">↗</span></button>
+      </form>
+      <p class="status" id="status" role="status" aria-live="polite"></p>
+      <p class="gate-note">Your passcode stays out of the URL. Ask the sender for help if access has changed.</p>
+    </section>
+    <section id="viewer" hidden aria-label="Shared 121 planner">
+      <div class="viewer-tools">
+        <div><strong id="viewer-title" tabindex="-1">121 planner</strong><span id="page-count"></span></div>
+        <div class="viewer-actions"><label for="zoom">View</label><select id="zoom"><option value="fit">Fit width</option><option value="1">100%</option><option value="1.25">125%</option><option value="1.5">150%</option></select><button id="lock" type="button">Lock planner</button></div>
+      </div>
+      <p id="viewer-status" class="viewer-status" role="status" aria-live="polite"></p>
+      <div id="pages" class="pages"></div>
+      <p class="viewer-footer">Shared for viewing · Created by Chapter Companion</p>
+    </section>
+    <noscript><p class="no-script">Enable JavaScript to enter your passcode and view this planner.</p></noscript>
+  </main>
+</body>
+</html>

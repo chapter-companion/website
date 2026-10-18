@@ -3,6 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "sync:planner-assets": "node scripts/sync-planner-assets.mjs",
     "build": "node scripts/build-associations.mjs",
     "test": "node --test",
     "check:release": "node scripts/build-associations.mjs --require-android"
