@@ -23,6 +23,23 @@ The landing page, download route, and planner promotion share the public
 token, passcode, document or referrer, allows only HTTPS App Store / Google Play
 destinations, and falls back to trusted defaults after one second or any error.
 
+Deployed on 18 October 2026 as `7546a912.chapter-companion.pages.dev`, runtime
+source commit `88349a8`. Live HTTP checks verified Android and iPhone/iPad store
+redirects, the desktop HTML response, no-store / User-Agent headers, ignored
+redirect query parameters, and the existing www redirect and association files.
+The live fictional seven-page planner opened with its passcode and displayed
+the promotion below its final page; both store links were correct and the
+browser reported no warnings or errors. The passcode screen also displayed the
+promotion. Local 390px checks fit without horizontal overflow. All 25 website
+tests and release checks passed; no physical-device test is claimed.
+
+The live Laravel-managed app invitation template now includes
+`https://chaptercompanion.app/download` while preserving its personalized
+`{link}` placeholder. This makes the download link available to the submitted
+mobile build 58 on its next settings fetch. Subsequent Flutter source changes
+also append a missing download link to custom/offline messages and avoid
+duplicates; those later source changes are not part of build 58.
+
 ## Passcode-protected planner pages
 
 `https://chaptercompanion.app/connect/{32-character-token}` opens a browser page
