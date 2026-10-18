@@ -1,1 +1,1 @@
-{"version":1,"include":["/connect","/connect/*"],"exclude":[]}
+{"version":1,"include":["/connect","/connect/*","/download","/download/"],"exclude":[]}

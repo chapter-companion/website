@@ -2,6 +2,7 @@ import {
   parseSharedLink, normalizeSettings, platformFor, appLinkFor,
   androidIntentFor, createFallbackController,
 } from './link-utils.js';
+import {loadPublicAppLinkSettings} from './store-links.js';
 
 const route = parseSharedLink(window.location.href);
 const platform = platformFor(navigator.userAgent, navigator.maxTouchPoints);
@@ -67,28 +68,8 @@ $('open-app').addEventListener('click', () => {
   // installed app before this page, when the verified App Link is available.
 });
 
-async function loadSettings() {
-  const controller = new AbortController();
-  const timeout = window.setTimeout(() => controller.abort(), 1000);
-  try {
-    const response = await fetch('https://rfmzmoeherrzbjglwcor.supabase.co/rest/v1/rpc/get_public_app_link_settings', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        apikey: 'sb_publishable_c1sBYr7bmBFmcHB47hsrjw_jBWh2-nX',
-      },
-      body: '{}', signal: controller.signal, credentials: 'omit', cache: 'no-store',
-    });
-    if (response.ok) settings = normalizeSettings(await response.json());
-  } catch {
-    // Store links remain available even if settings cannot be reached.
-  } finally {
-    window.clearTimeout(timeout);
-  }
-  updateLinks();
-}
-
-await loadSettings();
+settings = await loadPublicAppLinkSettings();
+updateLinks();
 if (autoHandoffAllowed && ['planner', 'invite'].includes(route.kind) && document.visibilityState === 'visible') {
   if (platform === 'android') {
     $('redirect-status').textContent = 'Opening your invitation…';

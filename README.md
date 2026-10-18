@@ -2,6 +2,27 @@
 
 Buildless public landing page and native app-link handoff for `chaptercompanion.app`.
 
+## App downloads and planner promotion
+
+`https://chaptercompanion.app/download` opens the configured Google Play URL on
+Android and the configured App Store URL on iPhone and iPad, including iPad's
+desktop browsing mode. The Worker returns an HTTP 302 for explicit Android,
+iPhone and iPad user agents, using the configured store URL. Desktop visitors
+see a branded page with both store buttons. Macintosh-style iPadOS uses a
+client-side touch-point check to choose the App Store. Every download response
+is no-store and varies on User-Agent; URL query parameters cannot choose a
+redirect destination. The HTML includes working store buttons without JavaScript.
+
+The protected planner displays a small Chapter Companion promotion after both
+the passcode gate and the unlocked viewer. It stays outside the document pages
+and is suppressed when printing. Its app icon and store symbols are self-hosted.
+It never redirects visitors automatically or changes the planner's access state.
+
+The landing page, download route, and planner promotion share the public
+`get_public_app_link_settings()` loader in `dist/store-links.js`. It sends no
+token, passcode, document or referrer, allows only HTTPS App Store / Google Play
+destinations, and falls back to trusted defaults after one second or any error.
+
 ## Passcode-protected planner pages
 
 `https://chaptercompanion.app/connect/{32-character-token}` opens a browser page
@@ -82,7 +103,7 @@ The production host is the Cloudflare Pages **Direct Upload** project `chapter-c
 
 1. Run `npm run check:release` and `npm test` locally.
 2. With an authenticated Wrangler installation, run `npx wrangler@4.151.1 pages deploy dist --project-name chapter-companion --branch main` from this repository. This deploys the protected-route Worker and all assets together.
-3. Verify `/connect/{32-character-token}`, `/121-planner/{32-character-token}`, `/invite/{id}`, and both `.well-known` JSON URLs on the production custom domain after deployment. Dashboard drag-and-drop alone is insufficient for the protected-route Worker.
+3. Verify `/download`, `/connect/{32-character-token}`, `/121-planner/{32-character-token}`, `/invite/{id}`, and both `.well-known` JSON URLs on the production custom domain after deployment. Dashboard drag-and-drop alone is insufficient for the protected-route Worker.
 
 The deployable output is `dist`; there is no framework build or dependency installation.
 
@@ -91,7 +112,7 @@ The deployable output is `dist`; there is no framework build or dependency insta
 - Configure `www.chaptercompanion.app` → `https://chaptercompanion.app` with a Cloudflare Redirect Rule / Bulk Redirect, preserving the path suffix and query string. Domain-level rules are not supported in Pages `_redirects`.
 - `_headers` supplies the app-association MIME types and a restrictive content security policy.
 
-No runtime credentials or build dependencies are needed. The Supabase `sb_publishable_…` key in `dist/app.js` is the application's public, anonymous API key, used only for the public settings RPC. Never replace it with a service-role or secret key.
+No runtime credentials or build dependencies are needed. The Supabase `sb_publishable_…` key in `dist/store-links.js` is the application's public, anonymous API key, used only for the public settings RPC. Never replace it with a service-role or secret key.
 
 ## Release association files
 
