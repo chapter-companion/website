@@ -46,7 +46,7 @@ test('Cloudflare serves the protected route separately and prevents cache/indexi
   const rejected=await worker.fetch(new Request('https://chaptercompanion.app/connect/'+'A'.repeat(32),{method:'POST'}),{});
   assert.equal(rejected.status,405);
   const html=await readFile(new URL('../dist/planner-connect.html',import.meta.url),'utf8');
-  assert.match(html,/src="\/planner-assets\/connect.js"/);
+  assert.match(html,/src="\/planner-assets\/connect\.js(?:\?[^"\s]+)?"/);
   assert.doesNotMatch(html,/<iframe|<embed|<object|download=/i);
   assert.doesNotMatch(html,/id="lock"|>Lock planner</);
 });

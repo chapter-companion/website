@@ -138,6 +138,25 @@ The production host is the Cloudflare Pages **Direct Upload** project `chapter-c
 
 The deployable output is `dist`; there is no framework build or dependency installation.
 
+### Runtime asset versions
+
+Fresh no-store HTML can still load an old cached script or stylesheet when its
+URL is unchanged. Production static asset headers observed on 18 October 2026
+allowed four hours of browser caching. In particular, a new planner page without
+the manual lock button must never load the old script that requires that button.
+
+When changing a runtime asset, change every URL that loads it, including any
+JavaScript module import URLs. A version query on an entry script does not
+automatically version its imports. For `/styles.css`, `/app-promo.css`, and
+`/planner-assets/connect.js`, `npm test` requires `?v=` followed by the first
+12 hexadecimal characters of the file's SHA-256 in every HTML reference. Update
+all referencing pages when this check fails; do not reuse a date or release label.
+
+After deployment, verify the versioned response bytes, then use an already-open
+browser to confirm the new layout, absence of the manual lock action, and active
+background access checks without console errors. A fresh browser alone does not
+exercise an older cached runtime.
+
 - The Pages custom domain owns the apex DNS record. Preserve mail, verification, and other unrelated DNS records.
 - `_redirects` serves `/121-planner/{token}` and `/invite/{id}` through the landing page. No top-level `404.html` is shipped, so Cloudflare’s built-in single-page-app fallback also preserves deep links. Unknown routes render a friendly message in the client. Association files remain direct JSON responses.
 - Configure `www.chaptercompanion.app` → `https://chaptercompanion.app` with a Cloudflare Redirect Rule / Bulk Redirect, preserving the path suffix and query string. Domain-level rules are not supported in Pages `_redirects`.
