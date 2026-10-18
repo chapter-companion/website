@@ -30,6 +30,17 @@ the passcode gate and the unlocked viewer. It stays outside the document pages
 and is suppressed when printing. Its app icon and store symbols are self-hosted.
 It never redirects visitors automatically or changes the planner's access state.
 
+The 18 October desktop follow-up is live as `66b81408.chapter-companion.pages.dev`
+(runtime commit `ea3afde`, functional changes `a144c2e`). It removes the manual
+Lock planner button and adds the existing iPhone/iPad App Store listing as the
+install option for compatible Apple silicon Macs. Microsoft Store work was
+deferred at the user's request; Windows visitors retain browser viewing guidance.
+All 28 website tests and release checks passed. In an existing browser session,
+a normal reload loaded the content-versioned assets, opened all seven sample
+pages, showed no lock button or new console errors, and changed zoom correctly.
+Both the download page and the passcode promotion fit a 390px viewport without
+horizontal overflow. Store installation on physical devices was not tested.
+
 The landing page, download route, and planner promotion share the public
 `get_public_app_link_settings()` loader in `dist/store-links.js`. It sends no
 token, passcode, document or referrer, allows only HTTPS App Store / Google Play
