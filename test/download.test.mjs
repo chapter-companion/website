@@ -4,7 +4,7 @@ import {readFile} from 'node:fs/promises';
 import worker from '../dist/_worker.js';
 import {createWorker} from '../dist/worker-router.js';
 import {DEFAULT_SETTINGS, normalizeSettings} from '../dist/link-utils.js';
-import {downloadUrlFor, loadPublicAppLinkSettings} from '../dist/store-links.js';
+import {applyStoreLinks, downloadUrlFor, loadPublicAppLinkSettings} from '../dist/store-links.js';
 
 const defaults = normalizeSettings();
 const configured = {
@@ -132,4 +132,27 @@ test('planner promotion stays after the viewer, separate from the document, and 
   const routes = JSON.parse(await readFile(new URL('../dist/_routes.json', import.meta.url), 'utf8'));
   assert.ok(routes.include.includes('/connect/*'));
   assert.ok(routes.include.includes('/download'));
+});
+
+test('the Mac option follows the same validated dynamic App Store URL as iPhone and iPad', () => {
+  const phone = {dataset:{storePlatform:'ios'}};
+  const mac = {dataset:{storePlatform:'ios'}};
+  const android = {dataset:{storePlatform:'android'}};
+  const root = {querySelectorAll:() => [phone, mac, android]};
+  applyStoreLinks(root, configured);
+  assert.equal(phone.href, configured.ios_store_url);
+  assert.equal(mac.href, configured.ios_store_url);
+  assert.equal(android.href, configured.android_store_url);
+  applyStoreLinks(root, {ios_store_url:'https://attacker.invalid'});
+  assert.equal(mac.href, DEFAULT_SETTINGS.ios_store_url);
+});
+
+test('desktop options state verified Mac compatibility and provide Windows browser guidance without inventing a store listing', async () => {
+  const html = await readFile(new URL('../dist/app-download.html', import.meta.url), 'utf8');
+  assert.match(html, /Apple silicon \(M1 or later\)/);
+  assert.match(html, /Runs the iPhone\/iPad app; check compatibility in the App Store/);
+  assert.doesNotMatch(html, /macOS (11|12)|Intel Mac/);
+  assert.match(html, /A Windows store download is not available here yet/);
+  assert.match(html, /Shared planners work in your browser/);
+  assert.doesNotMatch(html, /apps\.microsoft\.com|ms-windows-store:/);
 });

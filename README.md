@@ -13,6 +13,18 @@ client-side touch-point check to choose the App Store. Every download response
 is no-store and varies on User-Agent; URL query parameters cannot choose a
 redirect destination. The HTML includes working store buttons without JavaScript.
 
+The Mac option uses the same validated, configurable App Store URL as iPhone and
+iPad. The [official Apple listing](https://apps.apple.com/us/app/chapter-companion/id6804715863)
+supports Macs with Apple silicon (M1 or later), running the iPhone/iPad app.
+The website directs visitors to check current compatibility in the App Store;
+it does not claim a native Mac build or Intel Mac support. Mac users remain on
+the download page rather than being redirected automatically.
+
+Windows visitors can view shared planners in their browser and use the mobile
+companion. No verified Microsoft Store product URL is currently configured, so
+the Windows card explains availability without an install button. Add a Windows
+installation link only after its actual store listing has been verified.
+
 The protected planner displays a small Chapter Companion promotion after both
 the passcode gate and the unlocked viewer. It stays outside the document pages
 and is suppressed when printing. Its app icon and store symbols are self-hosted.
@@ -71,7 +83,9 @@ changing its passcode resets its token bucket.
 
 The browser keeps the passcode and unlocked content in memory, rechecks access
 every 30 seconds and when the tab becomes visible, and locks after 10 minutes
-without activity. It offers no download or print buttons, suppresses printed
+without activity. The visible manual lock action has been removed; background
+checks, passcode-change/revocation handling, and automatic locking remain.
+It offers no download or print buttons, suppresses printed
 content, and discourages save/copy/developer-tool shortcuts and context menus.
 Browser controls cannot guarantee prevention of screenshots, developer tools,
 saving or reconstruction once an authorized recipient can see the content.

@@ -125,7 +125,6 @@ $('reveal').addEventListener('click', () => {
   $('reveal').setAttribute('aria-pressed', String(show));
   $('reveal').setAttribute('aria-label', show ? 'Hide passcode' : 'Show passcode');
 });
-$('lock').addEventListener('click', () => { lock(); $('passcode').focus(); });
 $('zoom').addEventListener('change', resizePages);
 window.addEventListener('resize', resizePages);
 document.addEventListener('visibilitychange', () => {

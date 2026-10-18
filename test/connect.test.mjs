@@ -48,6 +48,7 @@ test('Cloudflare serves the protected route separately and prevents cache/indexi
   const html=await readFile(new URL('../dist/planner-connect.html',import.meta.url),'utf8');
   assert.match(html,/src="\/planner-assets\/connect.js"/);
   assert.doesNotMatch(html,/<iframe|<embed|<object|download=/i);
+  assert.doesNotMatch(html,/id="lock"|>Lock planner</);
 });
 
 test('worksheet backgrounds and font retain the hashes synchronized from Flutter PDF assets', async () => {
