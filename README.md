@@ -1,6 +1,65 @@
 # Chapter Companion website
 
-Buildless public landing page and native app-link handoff for `chaptercompanion.app`.
+Public landing page, Flutter browser app, and native app-link handoff for `chaptercompanion.app`.
+
+## Browser app
+
+`https://chaptercompanion.app/app/` runs the existing Flutter member app in the
+browser. `https://chaptercompanion.app/app/?auth=signup` opens account creation.
+Accounts, chapter approval, member directories, published availability and
+90-minute 121 reservations use the same Supabase backend as mobile. Existing
+approval and participant access checks still apply. Native store purchases and
+biometric unlock remain platform features; the established web/desktop access
+policy does not require an App Store purchase.
+
+The source is the adjacent `../../bni-roster/bni_roster_app` checkout. Build and
+copy its public release output before deploying this website:
+
+```sh
+cd /Volumes/Transcend/bni/bni-roster/bni_roster_app
+flutter build web --release --base-href /app/ --no-web-resources-cdn --pwa-strategy=none
+cd /Volumes/Transcend/bni/bni-docs/chapter-companion-website
+npm run sync:web-app
+npm run check:release
+npm test
+npx wrangler@4.151.1 pages deploy dist --project-name chapter-companion --branch main
+```
+
+`dist/app/` is ignored generated output and must be rebuilt/synchronized on a
+fresh checkout. The sync script accepts an optional absolute Flutter build
+directory and verifies the `/app/` base href. It copies no native credentials
+or source maps. Flutter bundles CanvasKit, fonts and PDF assets locally, and
+its custom bootstrap does not register an offline service worker. The Worker
+serves `/app/` navigation from its own shell and sends no-store headers for
+browser app resources to prevent mixed release assets. Missing scripts return
+404 rather than the public landing page.
+
+Only `/app/` receives the CSP needed for Flutter's styles, WASM and PDF worker;
+the protected `/connect/` viewer keeps its separate strict policy. Auth callback
+parameters remain in the browser URL. Supabase Auth's production Site URL is
+`https://chaptercompanion.app/app/`, and the exact redirect allowlist contains
+that URL plus `com.soance.mybni.app://login-callback/`. Browser signup and password
+recovery pass the browser callback; native apps retain their native callback.
+
+Browser-triggered booking and connection notification Edge Functions must
+support preflight from `https://chaptercompanion.app`. CORS does not replace
+their existing JWT/participant checks. Booking records and notification outbox
+transactions remain on the server.
+
+Deployed on 19 October 2026 to Cloudflare Pages release
+`8905d47a.chapter-companion.pages.dev`. Production `/app/` and signup URLs load,
+the two JavaScript entry assets match the local release SHA-256 values, CanvasKit
+has the correct WASM MIME type, and missing scripts return 404. Existing download,
+protected planner, native invitation and association routes remain reachable.
+Chrome production sign-in rejects synthetic invalid credentials with a useful
+error, and the clean startup has no console warnings/errors. All 36 website tests,
+11 Chrome Flutter tests (including booking success/conflict, publishing availability
+and 390px auth layouts), 32 native focused regressions, 38 Edge Function tests and
+the local PostgreSQL authorization/booking/registration suites passed. Flutter
+analysis is clean. Live function preflights allow the website and reject foreign
+origins; anonymous POSTs still return 401. No real account signup or reservation
+was created during verification. Local release evidence is under
+`output/web-app-qa/`.
 
 ## App downloads and planner promotion
 
@@ -64,6 +123,49 @@ also append a missing download link to custom/offline messages and avoid
 duplicates; those later source changes are not part of build 58.
 
 ## Passcode-protected planner pages
+
+After unlocking a shared planner, **Book a 121** appears above and below the
+document. Both buttons open the link owner's available-date calendar. Dates
+and 90-minute times use the visitor's browser timezone, include online/in-person
+labels, and support month navigation, refresh, and empty/unavailable states.
+The calendar follows paginated server results for persisted and recurring slots.
+
+The new `planner-web-share` `availability` action checks the same token,
+passcode, passcode version, live owner status and rate limits as the viewer.
+Its service-only database RPC derives the host from the link owner; a visitor
+cannot choose another owner. Only the host's display name, member ID, open slot
+IDs, times and meeting mode are returned. Addresses, other participants,
+bookings and private planner data are not part of this response.
+
+Selecting a time continues to `/app/?booking_member=<UUID>&booking_slot=<UUID>`.
+The app preserves only those two public scheduling IDs and a timestamp through
+sign-in, signup, email confirmation and chapter approval in the same browser.
+The selection can be cancelled and expires after seven days. Before showing
+review, `resolve_one_to_one_slot_for_booking` checks the actual member and slot
+again as the signed-in approved member. The existing booking RPC reserves the
+time only after explicit confirmation; a stale slot offers a fresh-time path.
+The planner token, passcode and document never enter that URL or pending storage.
+Locking/revoking the planner clears and closes its calendar, including pending
+network responses. The two buttons sit outside the document rendering and are
+suppressed together with the viewer when printing.
+
+Deployed on 19 October 2026 as `d1271027.chapter-companion.pages.dev`, with
+Supabase migration `20261019061134_planner_web_owner_booking_availability` and
+the updated `planner-web-share` Edge Function. All 48 website tests, 16 Chrome
+Flutter tests, 33 focused VM regressions, 19 planner Edge tests and the local
+PostgreSQL privacy/booking/recurrence tests passed; Flutter analysis is clean.
+Desktop and 390px sample-planner UI checks confirmed both buttons, owner dates,
+time selection and the preserved sign-in selection. No production reservation
+was created. Deployed script/style bytes match the release hashes.
+
+An admin-owned link without a linked live member has no booking host: the
+viewer remains available, and its calendar explains that the owner must set up
+a member profile and availability. Do not infer a host from PDF text or assign
+another member automatically. An unlinked owner intentionally returns no
+available times; viewing the planner does not require assigning a member.
+Follow-up live verification confirmed both this empty case and a linked owner's
+nine available 90-minute sessions over the next 31 days, including recurring
+occurrences. No account mapping, availability or reservation was changed.
 
 `https://chaptercompanion.app/connect/{32-character-token}` opens a browser page
 with a passcode gate. A small Pages Worker (`dist/_worker.js`) serves this clean

@@ -4,17 +4,17 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#b80d2c">
-  <meta name="description" content="Bring your chapter closer. Open your Chapter Companion invitation and plan meaningful 1-to-1 conversations.">
+  <meta name="description" content="Sign in or create your Chapter Companion account, connect with chapter members and book 1-to-1 conversations from your browser or phone.">
   <meta name="referrer" content="no-referrer">
   <meta property="og:title" content="Chapter Companion — Make every connection count">
-  <meta property="og:description" content="Open your invitation in Chapter Companion. Available on iPhone and Android.">
+  <meta property="og:description" content="Your chapter, on every screen. Sign in, create an account and book your next 1-to-1 in the web app. Also available on iPhone and Android.">
   <meta property="og:type" content="website">
   <title>Chapter Companion — Make every connection count</title>
   <link rel="icon" href="/app-icon.png" type="image/png">
   <link rel="apple-touch-icon" href="/app-icon.png">
   <meta property="og:image" content="https://chaptercompanion.app/app-icon.png">
-  <link rel="stylesheet" href="/styles.css?v=3b1f6502165c">
-  <script type="module" src="/app.js"></script>
+  <link rel="stylesheet" href="/styles.css?v=c33e2b99e553">
+  <script type="module" src="/app.js?v=a8568eb0761e"></script>
 </head>
 <body>
   <header class="header">
@@ -22,16 +22,20 @@
       <img class="brand-icon" src="/app-icon.png" alt="" width="44" height="44">
       <span>Chapter<span class="brand-light">Companion</span></span>
     </a>
-    <span class="header-note">Make every connection count.</span>
+    <nav class="header-actions" aria-label="Your account">
+      <a href="/app/">Sign in</a>
+      <a class="account-button" href="/app/?auth=signup">Create account</a>
+    </nav>
   </header>
   <main>
     <section class="hero" aria-labelledby="title">
       <div class="content">
-        <p class="eyebrow" id="eyebrow">BUILT FOR YOUR CHAPTER</p>
+        <p class="eyebrow" id="eyebrow">YOUR CHAPTER, ON EVERY SCREEN</p>
         <h1 id="title">Your chapter.<br><span>Closer together.</span></h1>
-        <p class="description" id="description">Turn introductions into meaningful conversations. Connect with your chapter and make room for your next 1-to-1 with Chapter Companion.</p>
-        <a class="primary-button" id="open-app" href="com.soance.mybni.app://">Open Chapter Companion <span aria-hidden="true">↗</span></a>
-        <p class="route-note" id="route-note">Get the app on your phone and take your chapter connections with you.</p>
+        <p class="description" id="description">Sign in, connect with your chapter and book your next 1-to-1, right from your browser. Make room for meaningful conversations wherever you are.</p>
+        <a class="primary-button" id="open-app" href="/app/">Open web app <span aria-hidden="true">↗</span></a>
+        <p class="account-prompt" id="account-prompt">New to Chapter Companion? <a href="/app/?auth=signup">Create account</a></p>
+        <p class="route-note" id="route-note">The full app, on your desktop, tablet or phone. Prefer the mobile app? Download it below.</p>
         <div class="stores" aria-label="Download Chapter Companion">
           <a class="store-button" id="ios-store" href="https://apps.apple.com/in/app/my-bni/id6804715863" aria-label="Download Chapter Companion on the App Store">
             <svg viewBox="0 0 24 28" aria-hidden="true"><path d="M19.7 14.8c0-3 2.5-4.5 2.6-4.6-1.4-2.1-3.7-2.3-4.5-2.3-1.9-.2-3.8 1.2-4.8 1.2-1 0-2.5-1.2-4.1-1.1C6.7 8 4.6 9.3 3.4 11.4c-2.4 4.1-.6 10.1 1.7 13.4 1.1 1.6 2.4 3.3 4.1 3.2 1.6-.1 2.3-1 4.3-1s2.6 1 4.3.9c1.8 0 2.9-1.6 4-3.2 1.3-1.8 1.8-3.6 1.8-3.7-.1 0-3.9-1.5-3.9-6.2ZM16.6 5.7c.9-1.1 1.6-2.7 1.4-4.2-1.4.1-3 .9-4 2-1 1.1-1.7 2.6-1.5 4.1 1.5.1 3.1-.8 4.1-1.9Z"/></svg>
@@ -43,7 +47,7 @@
           </a>
         </div>
         <p class="redirect-status" id="redirect-status" role="status" aria-live="polite"></p>
-        <noscript><p class="route-note">Use a store button above to install Chapter Companion. Then return to this invitation on your phone to open it in the app.</p></noscript>
+        <noscript><p class="route-note">Enable JavaScript to use the web app, or download Chapter Companion for your phone using the store buttons above.</p></noscript>
       </div>
       <div class="visual" aria-hidden="true">
         <div class="orbit orbit-one"></div><div class="orbit orbit-two"></div>
@@ -62,10 +66,10 @@
         <p class="visual-caption">ONE CHAPTER. SO MANY POSSIBILITIES.</p>
       </div>
     </section>
-    <section class="steps" aria-label="How to open your invitation">
-      <div><span class="step-number">01</span><p>Get the app<small>Available for iPhone and Android.</small></p></div>
-      <div><span class="step-number">02</span><p>Open your invitation<small>Tap the shared link on your phone.</small></p></div>
-      <div><span class="step-number">03</span><p>Make the connection<small>Continue with your chapter in the app.</small></p></div>
+    <section class="steps" aria-label="Get started with Chapter Companion">
+      <div><span class="step-number">01</span><p>Sign in or create an account<small>Get started in your browser or on your phone.</small></p></div>
+      <div><span class="step-number">02</span><p>Book your next 1-to-1<small>Find a chapter member and make time to connect.</small></p></div>
+      <div><span class="step-number">03</span><p>Keep your chapter close<small>Manage your connections and bookings anywhere.</small></p></div>
     </section>
   </main>
   <footer><span>Chapter Companion</span><span>Good connections start with a conversation.</span></footer>

@@ -7,9 +7,9 @@
   <meta name="referrer" content="no-referrer">
   <title>Shared 121 planner · Chapter Companion</title>
   <link rel="icon" href="/app-icon.png" type="image/png">
-  <link rel="stylesheet" href="/planner-assets/connect.css">
+  <link rel="stylesheet" href="/planner-assets/connect.css?v=221c57992900">
   <link rel="stylesheet" href="/app-promo.css?v=94839ce69c31">
-  <script type="module" src="/planner-assets/connect.js?v=c2c10f8fb996"></script>
+  <script type="module" src="/planner-assets/connect.js?v=e29ad1e1bb76"></script>
   <script type="module" src="/app-promo.js"></script>
 </head>
 <body>
@@ -36,9 +36,30 @@
         <div><strong id="viewer-title" tabindex="-1">121 planner</strong><span id="page-count"></span></div>
         <div class="viewer-actions"><label for="zoom">View</label><select id="zoom"><option value="fit">Fit width</option><option value="1">100%</option><option value="1.25">125%</option><option value="1.5">150%</option></select></div>
       </div>
+      <div class="booking-banner booking-banner-top">
+        <div><strong>Make time to connect.</strong><p>See the planner owner’s available times and book a 121.</p></div>
+        <button class="booking-open" type="button" data-booking-open disabled>Book a 121 <span aria-hidden="true">↗</span></button>
+      </div>
       <p id="viewer-status" class="viewer-status" role="status" aria-live="polite"></p>
       <div id="pages" class="pages"></div>
+      <div class="booking-banner booking-banner-bottom">
+        <div><strong>Continue the conversation.</strong><p>Choose a time for your next 121 with the planner owner.</p></div>
+        <button class="booking-open" type="button" data-booking-open disabled>Book a 121 <span aria-hidden="true">↗</span></button>
+      </div>
       <p class="viewer-footer">Shared for viewing · Created by Chapter Companion</p>
+      <dialog class="booking-dialog" id="booking-dialog" aria-labelledby="booking-title" aria-describedby="booking-owner booking-timezone">
+        <div class="booking-heading"><div><p class="eyebrow">A CONVERSATION WORTH HAVING</p><h2 id="booking-title">Book a 121</h2></div><button class="booking-close" id="booking-close" type="button" aria-label="Close booking calendar">×</button></div>
+        <p id="booking-owner" class="booking-owner"></p>
+        <p id="booking-timezone" class="booking-timezone"></p>
+        <div class="booking-calendar" aria-label="Available dates">
+          <div class="booking-month-nav"><button id="booking-prev" type="button" aria-label="Previous month">‹</button><h3 id="booking-month" aria-live="polite"></h3><button id="booking-next" type="button" aria-label="Next month">›</button></div>
+          <div class="booking-weekdays" aria-hidden="true"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div>
+          <div class="booking-days" id="booking-days" role="group" aria-label="Choose an available date"></div>
+        </div>
+        <div class="booking-status-row"><p id="booking-status" role="status" aria-live="polite"></p><button id="booking-refresh" type="button">Refresh</button></div>
+        <fieldset id="booking-times-group" class="booking-times-group" hidden><legend id="booking-times-label">Available times</legend><div id="booking-times" class="booking-times"></div></fieldset>
+        <div class="booking-confirm"><p id="booking-selection" class="booking-selection" role="status" aria-live="polite"></p><a class="booking-continue" id="booking-continue" hidden>Continue to booking <span aria-hidden="true">↗</span></a><p class="booking-auth-note">Sign in or create an account to review and confirm your 121. Already signed in? You can continue with your account. Your time is reserved only after you confirm.</p></div>
+      </dialog>
     </section>
     <aside class="app-promo" aria-labelledby="app-promo-title">
       <img class="app-promo-icon" src="/app-icon.png" width="56" height="56" alt="">

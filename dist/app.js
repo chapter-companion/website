@@ -5,6 +5,7 @@ import {
 import {loadPublicAppLinkSettings} from './store-links.js';
 
 const route = parseSharedLink(window.location.href);
+const isSharedInvitation = ['planner', 'invite'].includes(route.kind);
 const platform = platformFor(navigator.userAgent, navigator.maxTouchPoints);
 const $ = (id) => document.getElementById(id);
 const fallback = createFallbackController({
@@ -30,6 +31,11 @@ window.addEventListener('blur', cancelAutomaticHandoff);
 document.addEventListener('pointerdown', cancelAutomaticHandoff);
 document.addEventListener('keydown', cancelAutomaticHandoff);
 
+if (route.kind !== 'home') $('account-prompt').hidden = true;
+if (isSharedInvitation) {
+  $('open-app').innerHTML = 'Open Chapter Companion <span aria-hidden="true">↗</span>';
+}
+
 if (route.kind === 'invalid') {
   $('eyebrow').textContent = 'LET’S GET YOU CONNECTED';
   $('title').textContent = 'This link needs another look.';
@@ -54,13 +60,16 @@ if (route.kind === 'invalid') {
 function updateLinks() {
   $('android-store').href = settings.android_store_url;
   $('ios-store').href = settings.ios_store_url;
-  $('open-app').href = platform === 'android'
-    ? androidIntentFor(route, settings.android_store_url)
-    : appLinkFor(route);
+  if (isSharedInvitation) {
+    $('open-app').href = platform === 'android'
+      ? androidIntentFor(route, settings.android_store_url)
+      : appLinkFor(route);
+  }
 }
 updateLinks();
 
 $('open-app').addEventListener('click', () => {
+  if (!isSharedInvitation) return;
   fallback.stop();
   if (platform === 'ios') fallback.start(settings.ios_store_url, 2200);
   if (platform === 'android') fallback.start(settings.android_store_url, 2200);
@@ -70,7 +79,7 @@ $('open-app').addEventListener('click', () => {
 
 settings = await loadPublicAppLinkSettings();
 updateLinks();
-if (autoHandoffAllowed && ['planner', 'invite'].includes(route.kind) && document.visibilityState === 'visible') {
+if (autoHandoffAllowed && isSharedInvitation && document.visibilityState === 'visible') {
   if (platform === 'android') {
     $('redirect-status').textContent = 'Opening your invitation…';
     // Some browsers suppress intents without a user gesture. Use a guarded

@@ -4,7 +4,7 @@ import {readFile, readdir} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
 
 const dist = new URL('../dist/', import.meta.url);
-const runtimeAssets = new Set(['/styles.css', '/app-promo.css', '/planner-assets/connect.js']);
+const runtimeAssets = new Set(['/styles.css', '/app-promo.css', '/planner-assets/connect.js', '/planner-assets/connect.css']);
 
 test('planner runtime and shared styles use current content hashes in every HTML reference', async () => {
   const expected = new Map();
@@ -24,4 +24,11 @@ test('planner runtime and shared styles use current content hashes in every HTML
     }
   }
   assert.deepEqual(found, runtimeAssets);
+});
+
+test('protected booking calendar import uses its own current content hash', async () => {
+  const bytes = await readFile(new URL('planner-assets/booking.js', dist));
+  const expected = createHash('sha256').update(bytes).digest('hex').slice(0, 12);
+  const connect = await readFile(new URL('planner-assets/connect.js', dist), 'utf8');
+  assert.match(connect, new RegExp(`from '\\./booking\\.js\\?v=${expected}'`));
 });

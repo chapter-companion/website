@@ -147,12 +147,13 @@ test('the Mac option follows the same validated dynamic App Store URL as iPhone 
   assert.equal(mac.href, DEFAULT_SETTINGS.ios_store_url);
 });
 
-test('desktop options state verified Mac compatibility and provide Windows browser guidance without inventing a store listing', async () => {
+test('desktop options state verified Mac compatibility and link Windows users to the full browser app', async () => {
   const html = await readFile(new URL('../dist/app-download.html', import.meta.url), 'utf8');
   assert.match(html, /Apple silicon \(M1 or later\)/);
   assert.match(html, /Runs the iPhone\/iPad app; check compatibility in the App Store/);
   assert.doesNotMatch(html, /macOS (11|12)|Intel Mac/);
-  assert.match(html, /A Windows store download is not available here yet/);
-  assert.match(html, /Shared planners work in your browser/);
+  assert.match(html, /Sign in, create an account and book your next 1-to-1 in your browser/);
+  assert.match(html, /The web app works on Windows, Mac and other computers/);
+  assert.match(html, /href="\/app\/">Open web app/);
   assert.doesNotMatch(html, /apps\.microsoft\.com|ms-windows-store:/);
 });

@@ -1,4 +1,5 @@
 import {connectToken, validPasscode, renderDocument} from './document.js';
+import {createBookingCalendar} from './booking.js?v=2cb36e948a51';
 
 const endpoint = 'https://rfmzmoeherrzbjglwcor.supabase.co/functions/v1/planner-web-share';
 const publicKey = 'sb_publishable_c1sBYr7bmBFmcHB47hsrjw_jBWh2-nX';
@@ -10,11 +11,13 @@ let unlocked = false;
 let checking = false;
 let lastActivity = Date.now();
 let epoch = 0;
-let request = null;
+const requests = new Map();
 
 function lock(message = 'The planner is locked. Enter the passcode to open it again.') {
   epoch++;
-  request?.abort();
+  for (const controller of requests.keys()) controller.abort();
+  requests.clear();
+  booking.reset();
   passcode = null;
   version = null;
   unlocked = false;
@@ -31,26 +34,53 @@ function lock(message = 'The planner is locked. Enter the passcode to open it ag
   if (document.visibilityState === 'visible' && !$('unlock-form').hidden) $('passcode').focus();
 }
 
-async function call(action, secret, expectedVersion) {
+async function call(action, secret, expectedVersion, availability = {}) {
   const controller = new AbortController();
-  request = controller;
+  requests.set(controller, action);
   const timer = setTimeout(() => controller.abort(), 15000);
   try {
     const response = await fetch(endpoint, {
       method: 'POST', credentials: 'omit', cache: 'no-store', signal: controller.signal,
       headers: {'Content-Type': 'application/json', apikey: publicKey},
-      body: JSON.stringify({action, token, passcode: secret, ...(expectedVersion === undefined ? {} : {passcode_version: expectedVersion})}),
+      body: JSON.stringify({action, token, passcode: secret, ...(expectedVersion === undefined ? {} : {passcode_version: expectedVersion}),
+        ...(action === 'availability' ? {
+          range_start: availability.range_start, range_end: availability.range_end,
+          ...(availability.after_start_at ? {after_start_at: availability.after_start_at, after_id: availability.after_id} : {}),
+        } : {})}),
     });
-    if (!response.ok) throw new Error(response.status === 403 ? 'This link or passcode is unavailable. Check with the sender, or try again later.' : 'The planner could not be opened. Please try again.');
+    if (!response.ok) {
+      const error = new Error(response.status === 403 ? 'This link or passcode is unavailable. Check with the sender, or try again later.' : 'The planner could not be opened. Please try again.');
+      error.status = response.status;
+      throw error;
+    }
     return await response.json();
   } catch (error) {
     if (error.name === 'AbortError' || error instanceof TypeError) throw new Error('Could not reach the planner. Check your connection and try again.');
     throw error;
   } finally {
     clearTimeout(timer);
-    if (request === controller) request = null;
+    requests.delete(controller);
   }
 }
+
+const booking = createBookingCalendar({
+  loadAvailability: async (range) => {
+    const attempt = epoch;
+    if (!unlocked || !passcode) throw new Error('Open the planner to see available times.');
+    const result = await call('availability', passcode, version, range);
+    if (attempt !== epoch || !unlocked) throw new Error('The planner is locked.');
+    if (result.passcode_version !== version) {
+      const error = new Error('Access has changed.');
+      error.status = 403;
+      throw error;
+    }
+    return result;
+  },
+  cancelAvailability: () => {
+    for (const [controller, action] of requests) if (action === 'availability') controller.abort();
+  },
+  onAccessError: () => lock('Access has changed. Enter the current passcode to continue.'),
+});
 
 function resizePages() {
   const choice = $('zoom').value;
@@ -104,6 +134,7 @@ $('unlock-form').addEventListener('submit', async (event) => {
     passcode = secret;
     version = result.passcode_version;
     unlocked = true;
+    booking.unlock();
     lastActivity = Date.now();
     $('passcode').value = '';
     $('status').textContent = '';
@@ -128,7 +159,7 @@ $('reveal').addEventListener('click', () => {
 $('zoom').addEventListener('change', resizePages);
 window.addEventListener('resize', resizePages);
 document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState !== 'visible') $('pages').hidden = true;
+  if (document.visibilityState !== 'visible') { $('pages').hidden = true; booking.hide(); }
   else if (unlocked) checkAccess();
 });
 window.addEventListener('pagehide', () => lock('Enter the passcode to open the planner.'));
